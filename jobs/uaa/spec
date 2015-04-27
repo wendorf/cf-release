@@ -191,6 +191,8 @@ properties:
   uaa.ldap.groups.maxSearchDepth:
     description: "Set to number of levels a nested group search should go. Set to 1 to disable nested groups (default)"
     default: "1"
+  uaa.internalHostnames:
+    description: "A list of hostnames routed to the UAA in addition to uaa.url, login.url and localhost. The UAA uses this to resolve subdomains for Identity Zones."
   login.protocol:
     description: "Scheme to use for HTTP communication (http/https)"
   login.ldap.profile_type:
