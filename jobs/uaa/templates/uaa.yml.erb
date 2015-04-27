@@ -133,6 +133,11 @@ scim:
   users: <% properties.uaa.scim.users.each do |user| %>
     - <%= user %><% end %>
 <% end %>
+
+<% if properties.uaa.internalHostnames then %>
+internalHostnames: <% properties.uaa.internalHostnames %>
+<% end %>
+
 <% if properties.uaa.scim && properties.uaa.scim.external_groups then %>
   external_groups: <% properties.uaa.scim.external_groups.each do |group| %>
     - <%= group %><% end %>
