@@ -927,6 +927,7 @@ properties:
       passwd: https://console.example.com/password_resets/new
       signup: https://console.example.com/register
       signup-network: null
+    logout: null
     notifications:
       url: null
     protocol: https
@@ -1074,7 +1075,7 @@ properties:
         authorized-grant-types: client_credentials,refresh_token
         scope: openid,cloud_controller_service_permissions.read
         secret: gorouter_secret
-
+    database: null
     issuer: https://uaa.example.com
     jwt:
       signing_key: sk
@@ -1091,6 +1092,7 @@ properties:
     spring_profiles: null
     url: https://uaa.example.com
     user: null
+    zones: null
   hm9000:
     url: https://hm9000.example.com
   template_only:

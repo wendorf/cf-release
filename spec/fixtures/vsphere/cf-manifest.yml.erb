@@ -931,6 +931,10 @@ properties:
       passwd: https://console.0.0.0.3.xip.io/password_resets/new
       signup: https://console.0.0.0.3.xip.io/register
       signup-network: null
+    logout:
+      redirect:
+        parameter:
+          disable: false
     notifications:
       url: null
     protocol: http
@@ -1076,6 +1080,7 @@ properties:
         authorized-grant-types: client_credentials,refresh_token
         scope: openid,cloud_controller_service_permissions.read
         secret: gorouter_secret
+    database: null
     issuer: https://uaa.0.0.0.3.xip.io
     jwt:
       signing_key: sk
@@ -1092,6 +1097,11 @@ properties:
     spring_profiles: null
     url: https://uaa.0.0.0.3.xip.io
     user: null
+    zones:
+      internal:
+        hostnames:
+          - host2
+          - host3.test.com
   uaadb:
     address: 0.0.0.12
     databases:
