@@ -260,6 +260,8 @@ properties:
 
     ldap: ~
 
+    newrelic: ~
+
     spring_profiles: ~
 
     user: ~
