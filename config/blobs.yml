@@ -163,3 +163,7 @@ uaa/apache-tomcat-7.0.61.tar.gz:
   object_id: fdad7b89-61f5-4cd1-a003-49c4d872412b
   sha: 98ccbc95d029291e81bf818879ec8a0aa14465df
   size: 8816567
+consul/consul-template_0.9.0_linux_amd64.tar.gz:
+  object_id: e83bcdcd-2f31-4b73-8cf8-516d54e8f59a
+  sha: a44e441f9347abe64956e5bb30c4d4b0464d1f73
+  size: 2460384

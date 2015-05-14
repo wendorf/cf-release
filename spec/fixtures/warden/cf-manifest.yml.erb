@@ -6,6 +6,48 @@ compilation:
   workers: 6
 director_uuid: DIRECTOR_UUID
 jobs:
+- instances: 0
+  name: consul_z1
+  networks:
+  - name: cf1
+    static_ips: []
+  persistent_disk: 1024
+  properties:
+    consul:
+      agent:
+        mode: server
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: consul_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+    serial: true
+- instances: 0
+  name: consul_z2
+  networks:
+  - name: cf2
+    static_ips: []
+  persistent_disk: 1024
+  properties:
+    consul:
+      agent:
+        mode: server
+    metron_agent:
+      zone: z2
+  resource_pool: medium_z2
+  templates:
+  - name: consul_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+    serial: true
 - default_networks:
   - name: cf1
     static_ips: null
@@ -81,6 +123,8 @@ jobs:
     release: cf
   - name: metron_agent
     release: cf
+  - name: consul_agent
+    release: cf
   update: {}
 - instances: 1
   name: nats_z1
@@ -121,48 +165,6 @@ jobs:
   - name: metron_agent
     release: cf
   update: {}
-- instances: 0
-  name: consul_z1
-  networks:
-  - name: cf1
-    static_ips: []
-  persistent_disk: 1024
-  properties:
-    consul:
-      agent:
-        mode: server
-    metron_agent:
-      zone: z1
-  resource_pool: medium_z1
-  templates:
-  - name: consul_agent
-    release: cf
-  - name: metron_agent
-    release: cf
-  update:
-    max_in_flight: 1
-    serial: true
-- instances: 0
-  name: consul_z2
-  networks:
-  - name: cf2
-    static_ips: []
-  persistent_disk: 1024
-  properties:
-    consul:
-      agent:
-        mode: server
-    metron_agent:
-      zone: z2
-  resource_pool: medium_z2
-  templates:
-  - name: consul_agent
-    release: cf
-  - name: metron_agent
-    release: cf
-  update:
-    max_in_flight: 1
-    serial: true
 - instances: 1
   name: etcd_z1
   networks:
@@ -299,38 +301,6 @@ jobs:
   - name: metron_agent
     release: cf
   - name: consul_agent
-    release: cf
-  update: {}
-- instances: 0
-  name: login_z1
-  networks:
-  - name: cf1
-  properties:
-    networks:
-      apps: cf1
-    metron_agent:
-      zone: z1
-  resource_pool: medium_z1
-  templates:
-  - name: login
-    release: cf
-  - name: metron_agent
-    release: cf
-  update: {}
-- instances: 0
-  name: login_z2
-  networks:
-  - name: cf2
-  properties:
-    networks:
-      apps: cf2
-    metron_agent:
-      zone: z2
-  resource_pool: medium_z2
-  templates:
-  - name: login
-    release: cf
-  - name: metron_agent
     release: cf
   update: {}
 - instances: 1
@@ -2402,6 +2372,7 @@ properties:
     apps_domain: 10.244.0.34.xip.io
     nodes: 1
     skip_ssl_validation: true
+  app_ssh: null
   app_domains:
   - 10.244.0.34.xip.io
   cc:
@@ -2446,6 +2417,8 @@ properties:
       package: buildpack_php
     - name: staticfile_buildpack
       package: buildpack_staticfile
+    - name: binary_buildpack
+      package: buildpack_binary
     default_health_check_timeout: 60
     default_quota_definition: default
     default_running_security_groups:
@@ -2484,6 +2457,8 @@ properties:
       package: buildpack_php
     - name: staticfile_buildpack
       package: buildpack_staticfile
+    - name: binary_buildpack
+      package: buildpack_binary
     jobs:
       app_bits_packer:
         timeout_in_seconds: null
@@ -2583,6 +2558,8 @@ properties:
       package: buildpack_php
     - name: staticfile_buildpack
       package: buildpack_staticfile
+    - name: binary_buildpack
+      package: buildpack_binary
     thresholds:
       api:
         alert_if_above_mb: null
@@ -2678,7 +2655,7 @@ properties:
       domain: null
     asset_base_url: null
     brand: oss
-    catalina_opts: -Xmx96m -XX:MaxPermSize=64m
+    catalina_opts: null
     invitations_enabled: null
     links:
       home: https://console.10.244.0.34.xip.io
@@ -2999,8 +2976,7 @@ properties:
     zones:
       internal:
         hostnames:
-          - host4
-          - host5.test.com
+          - uaa.service.consul
   uaadb:
     address: 10.244.0.30
     databases:

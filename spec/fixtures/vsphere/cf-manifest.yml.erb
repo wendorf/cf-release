@@ -8,77 +8,6 @@ compilation:
   workers: 6
 director_uuid: DIRECTOR_UUID
 jobs:
-- default_networks:
-  - name: cf1
-    static_ips: null
-  instances: 1
-  name: ha_proxy_z1
-  networks:
-  - name: cf1
-    static_ips:
-    - 0.0.0.3
-  properties:
-    metron_agent:
-      zone: z1
-    ha_proxy:
-      ssl_ciphers: null
-      ssl_pem: null
-      disable_http: true
-    networks:
-      apps: cf1
-    router:
-      servers:
-        z1:
-        - 0.0.0.5
-        z2:
-        - 0.0.1.5
-  resource_pool: router_z1
-  templates:
-  - name: haproxy
-    release: cf
-  - name: metron_agent
-    release: cf
-  update: {}
-- instances: 1
-  name: nats_z1
-  networks:
-  - name: cf1
-    static_ips:
-    - 0.0.0.1
-  properties:
-    networks:
-      apps: cf1
-    metron_agent:
-      zone: z1
-  resource_pool: medium_z1
-  templates:
-  - name: nats
-    release: cf
-  - name: nats_stream_forwarder
-    release: cf
-  - name: metron_agent
-    release: cf
-  update: {}
-- instances: 1
-  name: nats_z2
-  networks:
-  - name: cf2
-    static_ips:
-    - 0.0.1.1
-  properties:
-    networks:
-      apps: cf2
-    metron_agent:
-      zone: z2
-  resource_pool: medium_z2
-  templates:
-  - name: nats
-    release: cf
-  - name: nats_stream_forwarder
-    release: cf
-  - name: metron_agent
-    release: cf
-  update: {}
 - instances: 0
   name: consul_z1
   networks:
@@ -121,6 +50,79 @@ jobs:
   update:
     max_in_flight: 1
     serial: true
+- default_networks:
+  - name: cf1
+    static_ips: null
+  instances: 1
+  name: ha_proxy_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 0.0.0.3
+  properties:
+    metron_agent:
+      zone: z1
+    ha_proxy:
+      ssl_ciphers: null
+      ssl_pem: null
+      disable_http: true
+    networks:
+      apps: cf1
+    router:
+      servers:
+        z1:
+        - 0.0.0.5
+        z2:
+        - 0.0.1.5
+  resource_pool: router_z1
+  templates:
+  - name: haproxy
+    release: cf
+  - name: metron_agent
+    release: cf
+  - name: consul_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: nats_z1
+  networks:
+  - name: cf1
+    static_ips:
+    - 0.0.0.1
+  properties:
+    networks:
+      apps: cf1
+    metron_agent:
+      zone: z1
+  resource_pool: medium_z1
+  templates:
+  - name: nats
+    release: cf
+  - name: nats_stream_forwarder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
+- instances: 1
+  name: nats_z2
+  networks:
+  - name: cf2
+    static_ips:
+    - 0.0.1.1
+  properties:
+    networks:
+      apps: cf2
+    metron_agent:
+      zone: z2
+  resource_pool: medium_z2
+  templates:
+  - name: nats
+    release: cf
+  - name: nats_stream_forwarder
+    release: cf
+  - name: metron_agent
+    release: cf
+  update: {}
 - instances: 2
   name: etcd_z1
   networks:
@@ -260,37 +262,6 @@ jobs:
   - name: metron_agent
     release: cf
   - name: consul_agent
-    release: cf
-  update: {}
-- instances: 0
-  name: login_z1
-  networks:
-  - name: cf1
-  properties:
-    networks:
-      apps: cf1
-    metron_agent:
-      zone: z1
-  resource_pool: medium_z1
-  templates:
-  - name: login
-  - name: metron_agent
-    release: cf
-  update: {}
-- instances: 0
-  name: login_z2
-  networks:
-  - name: cf2
-  properties:
-    networks:
-      apps: cf2
-    metron_agent:
-      zone: z2
-  resource_pool: medium_z2
-  templates:
-  - name: login
-    release: cf
-  - name: metron_agent
     release: cf
   update: {}
 - instances: 1
@@ -690,6 +661,7 @@ networks:
     - 0.0.1.0 - 0.0.1.26
 properties:
   acceptance_tests: null
+  app_ssh: null
   app_domains:
   - 0.0.0.3.xip.io
   cc:
@@ -732,6 +704,8 @@ properties:
       package: buildpack_php
     - name: staticfile_buildpack
       package: buildpack_staticfile
+    - name: binary_buildpack
+      package: buildpack_binary
     default_health_check_timeout: 60
     default_quota_definition: default
     default_running_security_groups:
@@ -767,6 +741,8 @@ properties:
       package: buildpack_php
     - name: staticfile_buildpack
       package: buildpack_staticfile
+    - name: binary_buildpack
+      package: buildpack_binary
     jobs:
       app_bits_packer:
         timeout_in_seconds: null
@@ -856,6 +832,8 @@ properties:
       package: buildpack_php
     - name: staticfile_buildpack
       package: buildpack_staticfile
+    - name: binary_buildpack
+      package: buildpack_binary
     thresholds:
       api:
         alert_if_above_mb: null
@@ -954,7 +932,7 @@ properties:
       domain: null
     asset_base_url: null
     brand: oss
-    catalina_opts: -Xmx768m -XX:MaxPermSize=256m
+    catalina_opts: null
     invitations_enabled: null
     links:
       home: https://console.0.0.0.3.xip.io
@@ -1132,8 +1110,7 @@ properties:
     zones:
       internal:
         hostnames:
-          - host2
-          - host3.test.com
+          - uaa.service.consul
   uaadb:
     address: 0.0.0.12
     databases:
